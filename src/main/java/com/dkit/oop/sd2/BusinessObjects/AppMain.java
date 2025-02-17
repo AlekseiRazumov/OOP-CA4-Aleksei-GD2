@@ -4,7 +4,8 @@ package com.dkit.oop.sd2.BusinessObjects;
 
 import com.dkit.oop.sd2.DAOs.MySqlUserDao;
 import com.dkit.oop.sd2.DAOs.UserDaoInterface;
-import com.dkit.oop.sd2.DTOs.User;
+import com.dkit.oop.sd2.DTOs.Expense;
+import com.dkit.oop.sd2.DTOs.Income;
 import com.dkit.oop.sd2.Exceptions.DaoException;
 import java.util.List;
 
@@ -34,13 +35,13 @@ public class AppMain
         try
         {
             System.out.println("\nCall findAllUsers()");
-            List<User> users = IUserDao.findAllUsers();     // call a method in the DAO
+            List<Expense> expenses = IUserDao.findAllUsers();     // call a method in the DAO
 
-            if( users.isEmpty() )
+            if( expenses.isEmpty() )
                 System.out.println("There are no Users");
             else {
-                for (User user : users)
-                    System.out.println("User: " + user.toString());
+                for (Expense expense : expenses)
+                    System.out.println("Expense: " + expense.toString());
             }
 
             // test dao with a username and password that we know are present in the database
