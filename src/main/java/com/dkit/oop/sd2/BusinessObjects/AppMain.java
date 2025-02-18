@@ -2,10 +2,9 @@ package com.dkit.oop.sd2.BusinessObjects;
 
 
 
-import com.dkit.oop.sd2.DAOs.MySqlUserDao;
+import com.dkit.oop.sd2.DAOs.MySqlExpenseAndIncomeDao;
 import com.dkit.oop.sd2.DAOs.UserDaoInterface;
 import com.dkit.oop.sd2.DTOs.Expense;
-import com.dkit.oop.sd2.DTOs.Income;
 import com.dkit.oop.sd2.Exceptions.DaoException;
 import java.util.List;
 
@@ -13,7 +12,7 @@ public class AppMain
 {
     public static void main(String[] args)
     {
-        UserDaoInterface IUserDao = new MySqlUserDao();  //"IUserDao" -> "I" stands for Interface
+        UserDaoInterface IUserDao = new MySqlExpenseAndIncomeDao();  //"IUserDao" -> "I" stands for Interface
 
         /// Notice that the userDao reference is an Interface type.
         /// This allows for the use of different concrete implementations.
