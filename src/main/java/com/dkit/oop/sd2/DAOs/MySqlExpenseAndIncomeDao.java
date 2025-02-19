@@ -301,5 +301,84 @@ public class MySqlExpenseAndIncomeDao extends MySqlDao implements UserDaoInterfa
             throw new DaoException("deleteIncomeById() " + e.getMessage());
         }
     }
+    @Override
+    public void findAllIncomesAndExpensesByMonth(String month) throws DaoException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        List<Income> incomesList = new ArrayList<>();
+        List<Expense> expensesList = new ArrayList<>();
+        double totalIncomes=0;
+        double totalExpenses=0;
+        double leftOver=0;
+
+        try {
+            //Get connection object using the getConnection() method inherited
+            // from the super class (MySqlDao.java)
+            connection = this.getConnection();
+
+            String query = "SELECT * FROM INCOMES where MONTHNAME(dateEarned)=?";
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, month);
+            //Using a PreparedStatement to execute SQL...
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                int incomeID = resultSet.getInt("incomeID");
+                String title = resultSet.getString("title");
+                double amount = resultSet.getDouble("amount");
+                String date = resultSet.getString("dateEarned");
+                Income u = new Income(incomeID,  title, amount, date);
+                incomesList.add(u);
+                totalIncomes+=amount;
+            }
+            if( incomesList.isEmpty() )
+                System.out.println("There are no Users");
+            else {
+                for (Income income : incomesList)
+                    System.out.println("Income: " + income.toString());
+            }
+            System.out.println("Total income: "+totalIncomes);
+            String query2 = "SELECT * FROM EXPENSES where MONTHNAME(dateIncurred)=?";
+            preparedStatement = connection.prepareStatement(query2);
+            preparedStatement.setString(1, month);
+            //Using a PreparedStatement to execute SQL...
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                int expenseID = resultSet.getInt("expenseID");
+                String title = resultSet.getString("title");
+                String category = resultSet.getString("category");
+                double amount = resultSet.getDouble("amount");
+                String date = resultSet.getString("dateIncurred");
+                Expense u = new Expense(expenseID,  title, category, amount, date);
+                expensesList.add(u);
+                totalExpenses+=amount;
+            }
+            if( expensesList.isEmpty() )
+                System.out.println("There are no Users");
+            else {
+                for (Expense expense : expensesList)
+                    System.out.println("Expense: " + expense.toString());
+            }
+            System.out.println("Total expenditure: "+totalExpenses);
+            leftOver=totalIncomes-totalExpenses;
+            System.out.println("Left over: "+leftOver);
+        } catch (SQLException e) {
+            throw new DaoException("findAllIncomesAndExpensesByMonth() " + e.getMessage());
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (connection != null) {
+                    freeConnection(connection);
+                }
+            } catch (SQLException e) {
+                throw new DaoException("findAllIncomesAndExpensesByMonth() " + e.getMessage());
+            }
+        }
+    }
 }
 
