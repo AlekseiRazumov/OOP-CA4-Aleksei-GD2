@@ -3,8 +3,9 @@ package com.dkit.oop.sd2.BusinessObjects;
 
 
 import com.dkit.oop.sd2.DAOs.MySqlExpenseAndIncomeDao;
-import com.dkit.oop.sd2.DAOs.UserDaoInterface;
+import com.dkit.oop.sd2.DAOs.DaoInterface;
 import com.dkit.oop.sd2.DTOs.Expense;
+import com.dkit.oop.sd2.DTOs.Income;
 import com.dkit.oop.sd2.Exceptions.DaoException;
 import java.util.List;
 
@@ -12,60 +13,89 @@ public class AppMain
 {
     public static void main(String[] args)
     {
-        UserDaoInterface IUserDao = new MySqlExpenseAndIncomeDao();  //"IUserDao" -> "I" stands for Interface
-
-        /// Notice that the userDao reference is an Interface type.
-        /// This allows for the use of different concrete implementations.
-        /// e.g. we could replace the MySqlUserDao with an OracleUserDao
-        /// (accessing an Oracle Database)
-        /// without changing anything in the Interface.
-        /// If the Interface doesn't change, then none of the
-        /// code in this file that uses the interface needs to change.
-        /// This code is dependent of the Interface but not on the implementation
-        /// of the interface.
-        /// The 'contract' defined by the interface will not be broken.
-        /// This means that this code is 'independent' of the code
-        /// used to access the database. (Reduced coupling).
-
-        /// The Business Objects require that all User DAOs implement
-        /// the interface called "UserDaoInterface", as the code uses
-        /// only references of the interface type to access the DAO methods.
+        DaoInterface IDao = new MySqlExpenseAndIncomeDao();
 
         try
         {
-            System.out.println("\nCall findAllUsers()");
-            List<Expense> expenses = IUserDao.findAllUsers();     // call a method in the DAO
+            System.out.println("\nCall findAllExpenses()");
+            List<Expense> expenses = IDao.findAllExpenses();
 
             if( expenses.isEmpty() )
-                System.out.println("There are no Users");
+                System.out.println("There are no expenses");
             else {
                 for (Expense expense : expenses)
                     System.out.println("Expense: " + expense.toString());
             }
 
-            // test dao with a username and password that we know are present in the database
-            // (Use phpMyAdmin to check that the database has a row with this data)
-            System.out.println("\nCall: findUserByUsernamePassword()");
-            String username = "smithj";
-            String password = "password";
+            System.out.println("\nCall totalExpenses()");
+            System.out.println("Total expenses: "+ IDao.totalExpenses());
 
-            User user = IUserDao.findUserByUsernamePassword(username, password);
 
-            if( user != null ) // null returned if userid and password not valid
-                System.out.println("User found: " + user);
-            else
-                System.out.println("Username with that password not found");
+            System.out.println("\nCall findAllIncomes()");
+            List<Income> incomes = IDao.findAllIncomes();
 
-            // test dao - with an invalid username (i.e. row not in database)
-            username = "madmax";
-            password = "thunderdome";
+            if( incomes.isEmpty() )
+                System.out.println("There are no incomes");
+            else {
+                for (Income income : incomes)
+                    System.out.println("Income: " + income.toString());
+            }
 
-            user = IUserDao.findUserByUsernamePassword(username, password);
+            System.out.println("\nCall totalIncomes()");
+            System.out.println("Total incomes: "+ IDao.totalIncomes());
 
-            if(user != null)
-                System.out.println("Username: " + username + " was found: " + user);
-            else
-                System.out.println("Username: " + username + ", password: " + password +" : NO match found");
+            System.out.println("\nCall addExpenses()");
+            String title = "Flight ticket";
+            String category = "Travel";
+            double amount = 56.68;
+            String dateIncurred = "2025-02-26";
+            IDao.addExpense(title,category,amount,dateIncurred);
+            expenses = IDao.findAllExpenses();
+            if( expenses.isEmpty() )
+                System.out.println("There are no expenses");
+            else {
+                for (Expense expense : expenses)
+                    System.out.println("Expense: " + expense.toString());
+            }
+
+            System.out.println("\nCall deleteExpenseById()");
+            int id=6;
+            IDao.deleteExpenseById(id);
+            expenses = IDao.findAllExpenses();
+            if( expenses.isEmpty() )
+                System.out.println("There are no expenses");
+            else {
+                for (Expense expense : expenses)
+                    System.out.println("Expense: " + expense.toString());
+            }
+
+
+            System.out.println("\nCall addIncome()");
+            title = "Delivery";
+            amount = 120.8;
+            String dateEarned = "2025-01-21";
+            IDao.addIncome(title,amount,dateEarned);
+            incomes = IDao.findAllIncomes();
+            if( incomes.isEmpty() )
+                System.out.println("There are no incomes");
+            else {
+                for (Income income : incomes)
+                    System.out.println("Income: " + income.toString());
+            }
+
+            System.out.println("\nCall deleteIncomeById()");
+            id=3;
+            IDao.deleteIncomeById(id);
+            incomes = IDao.findAllIncomes();
+            if( incomes.isEmpty() )
+                System.out.println("There are no incomes");
+            else {
+                for (Income income : incomes)
+                    System.out.println("Income: " + income.toString());
+            }
+
+            System.out.println("\nCall findAllIncomesAndExpensesByMonth()");
+            IDao.findAllIncomesAndExpensesByMonth("January");
         }
         catch( DaoException e )
         {
