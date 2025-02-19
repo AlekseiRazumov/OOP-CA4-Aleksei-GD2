@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MySqlExpenseAndIncomeDao extends MySqlDao implements UserDaoInterface {
+public class MySqlExpenseAndIncomeDao extends MySqlDao implements DaoInterface {
 
     @Override
     public List<Expense> findAllExpenses() throws DaoException {
