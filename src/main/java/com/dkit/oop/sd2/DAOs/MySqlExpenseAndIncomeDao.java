@@ -187,5 +187,119 @@ public class MySqlExpenseAndIncomeDao extends MySqlDao implements UserDaoInterfa
         }
         return total;     // may be empty
     }
+    @Override
+    public void addExpense(String title, String category,double amount, String date) throws DaoException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        Expense expense = null;
+        try {
+            connection = this.getConnection();
+
+            String query = "INSERT INTO EXPENSES (expenseID,title,category,amount, dateIncurred) VALUES (null,?,?,?,?)";
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, title);
+            preparedStatement.setString(2, category);
+            preparedStatement.setDouble(3, amount);
+            preparedStatement.setString(4,date);
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new DaoException("addExpense() " + e.getMessage());
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (connection != null) {
+                    freeConnection(connection);
+                }
+            } catch (SQLException e) {
+                throw new DaoException("addExpense() " + e.getMessage());
+            }
+        }
+
+    }
+    @Override
+    public void addIncome(String title, double amount, String date) throws DaoException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        Income income = null;
+        try {
+            connection = this.getConnection();
+
+            String query = "INSERT INTO INCOMES (incomeID,title,amount, dateEarned) VALUES (null,?,?,?)";
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, title);
+
+            preparedStatement.setDouble(2, amount);
+            preparedStatement.setString(3,date);
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new DaoException("addIncome() " + e.getMessage());
+        } finally {
+            try {
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (connection != null) {
+                    freeConnection(connection);
+                }
+            } catch (SQLException e) {
+                throw new DaoException("addIncome() " + e.getMessage());
+            }
+        }
+
+    }
+    @Override
+    public void deleteExpenseById(int id) throws DaoException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = this.getConnection();
+
+            String query = "DELETE FROM EXPENSES WHERE expenseID = ?";
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, id);
+
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new DaoException("deleteExpenseById() " + e.getMessage());
+        }
+    }
+    @Override
+    public void deleteIncomeById(int id) throws DaoException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = this.getConnection();
+
+            String query = "DELETE FROM INCOMES WHERE incomeID = ?";
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, id);
+
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new DaoException("deleteIncomeById() " + e.getMessage());
+        }
+    }
 }
 
